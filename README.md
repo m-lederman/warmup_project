@@ -10,3 +10,5 @@ My biggest challenge was that I did not know how to make my robot properly turn 
 If I had more time, I would have wanted to perfect the angle. I think I either would have tried to pull out a ruler to test the actual robot's angle, or I would have wanted to experiment in gazebo, because I assume it would have been able to give me more information about the turning angle. 
 
 I think this project was really helpful for me because it helped me get down the basics for coding the robot to move, which is something that will be a key element to every futur project.
+
+![Alt Text](https://github.com/m-lederman/warmup_project/blob/main/ezgif.com-gif-maker.gif)
