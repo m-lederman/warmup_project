@@ -15,6 +15,8 @@ class driveSquare(object):
         # setup publisher to the cmd_vel ROS topic
         self.robot_movement_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
         rospy.sleep(1)
+        #make the robot go forwards for two seconds then turn at approximately 90 degrees
+        #loop this four times to produce a square
         for i in range(4):
             self.twist = Twist(linear=Vector3(0.5,0,0),angular=Vector3(0,0,0))
             self.robot_movement_pub.publish(self.twist)
@@ -22,7 +24,7 @@ class driveSquare(object):
             self.twist = Twist(linear=Vector3(0,0,0),angular=Vector3(0,0,1.7))
             self.robot_movement_pub.publish(self.twist)
             rospy.sleep(1)
-            
+        #reset the robot to have no movement so it ends at rest   
         self.twist = Twist(linear=Vector3(0,0,0),angular=Vector3(0,0,0))
         self.robot_movement_pub.publish(self.twist)
 
