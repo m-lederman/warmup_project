@@ -14,7 +14,7 @@ from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Vector3
 
-# How close we will get to the person.
+# the closest we can get to the wall.
 min_dis = 0.1
 
 
@@ -41,17 +41,10 @@ class WallFollower(object):
         
 
     def process_scan(self, data):
-        # Determine closeness to wall by looking at scan data from in front of
-        #   the robot, set linear velocity based on that information, and
-        #   publish to cmd_vel.
-
-        # The ranges field is a list of 360 number where each number
-        #   corresponds to the distance to the closest obstacle from the
-        #   LiDAR at various angles. Each measurement is 1 degree apart.
-
-        # The first entry in the ranges list corresponds with what's directly
-        #   in front of the robot.
         
+        #we set the variable left that takes in data points
+        #we set turn to make sure our robot operates properly so long as it stays with 0.4 meters of the wall, which safety operates as a fail safe if the robot strays too far
+        #iturn and isafety are default set to negative numbers so that we know if the robot does not detect anything at all
         left = 0
         turn = 0.4
         iturn = -50
@@ -60,7 +53,7 @@ class WallFollower(object):
         
 
        
-        
+        #we only consider objects to the left of the robot, and we try to find the closest point detected
         for i in range (181):
             left = data.ranges[i]
             if (left < turn and left >= min_dis):
@@ -71,16 +64,18 @@ class WallFollower(object):
                 safety = left 
                 isafety = i
 
-        print(iturn)
-
+       
+        #we want our robot to turn so that it approaches a point where it is completely parallel to the wall and 0.25 meters away from it
         self.twist.angular.z = (iturn - 90) / 100 + ((turn - 0.25)*2)
 
+        #if the closest wall detected to the robot is behind it, turn at a much quicker pace, since the most frequent case where the wall is closest behind is when there is nothin in front and so it needs to do a 90 degree or more turn in the open
         if (iturn >= 100):
             self.twist.angular.z = (iturn - 90) / 10 + ((turn - 0.25)*20)
         
+        #the robot goes forward at a constant speed
         self.twist.linear.x = 0.05
 
-        
+        #if nothing is detected between 0.1 and 0.4 meters, then either the robot moves forward until it finds something or if it detects something within a meter that isn't head on, it tries to move towards that object as a correction mechanism
         if (iturn == -50):
             self.twist.angular.z = 0
             self.twist.linear.x = 0.1
@@ -89,9 +84,9 @@ class WallFollower(object):
                 self.twist.linear.x = 0.001/ (1+ abs(90-isafety))
             
         
-        print(self.twist.linear.x)
+       
         # Publish msg to cmd_vel.
-        ##rospy.sleep(100)
+        
         self.twist_pub.publish(self.twist)
         
 
