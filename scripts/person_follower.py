@@ -17,7 +17,7 @@ from geometry_msgs.msg import Vector3
 # How close we will get to the person.
 min_dis = 0.5
 
-##max_dis = 3.1
+
 
 class PersonFollower(object):
     """ This node walks the robot to wall and stops """
@@ -39,23 +39,13 @@ class PersonFollower(object):
         self.twist = Twist(linear=lin,angular=ang)
 
     def process_scan(self, data):
-        # Determine closeness to wall by looking at scan data from in front of
-        #   the robot, set linear velocity based on that information, and
-        #   publish to cmd_vel.
-
-        # The ranges field is a list of 360 number where each number
-        #   corresponds to the distance to the closest obstacle from the
-        #   LiDAR at various angles. Each measurement is 1 degree apart.
-
-        # The first entry in the ranges list corresponds with what's directly
-        #   in front of the robot.
-        #lvel = 0
-        #rvel = 0
+        #set a maximum distance that the robot will scan for and set a move variable that determines the degree distance of the closest object
         max_dis = 3.1
-        move = 0
+        move = -1
         
         
-        for i in range (180):
+        for i in range (181):
+            #does a full 360 degree scan and finds the closest object to the robot and determines its angle out of 180 degrees to the right or to the left
             r = - data.ranges[-i]
             
             l = data.ranges[i]
@@ -66,55 +56,23 @@ class PersonFollower(object):
             if (l<abs(max_dis) and l>= min_dis):
                 max_dis = l
                 move = i
+        #make sure the default speed if nothing is detected is 0
         self.twist.linear.x = 0
-        if (max_dis < 0):
+        
+        #since max_dis is positive or negative depending on if the object is to the left or to the right, we isolate which direction we turn in
+        if (max_dis < 0 and move >=0):
             self.twist.angular.z = -move/20
             print(max_dis)
-        if (max_dis > 0):
+        if (max_dis > 0 and move >=0):
             self.twist.angular.z = move/20
             print(max_dis)
-        if (move < 10 and move > 0):
+        #only moves if something is detected within a ten degree radius in both directions 
+        if (move < 10 and move >= 0):
             self.twist.linear.x = abs(max_dis)
         
 
             
-          ##  if (right == 0 or left == 0 or right > max_dis or left > max_dis):
-          ##      self.twist.angular.z = 0
-                
-       ##     if (right > 0 and right <= max_dis and (left == 0 or left > max_dis)):
-       ##         self.twist.angular.z = -i/5
-       ##         print("r")
-       ##         print(i)
-                
-        ##        break
-            
-        ##    if (left > 0 and left <= max_dis and (right == 0 or right > max_dis)):
-        ##        self.twist.angular.z = i/5
-         ##       print("l")
-        ##        print(i)
-              ##  print(2)
-         ##       break
-         ##   if (data.ranges[180] > 0 and data.ranges[180] <= max_dis):
-         ##       self.twist.angular.z = 30 
-            ##print(self.twist.angular.z)
-            
-       ## for i in range(11):
-            
-       ##     lvel = data.ranges[i]
-            
-       ##     rvel = data.ranges[-i]
-           
-         #   if ((lvel >= min_dis and lvel < max_dis) or (rvel >= min_dis and rvel < max_dis)):
-                # Go forward if not close enough to person.
-      #          self.twist.linear.x = lvel / 2 + rvel /2
-       #         break
-       #     if ((lvel == 0.0 or lvel >= max_dis or lvel <= min_dis) and (rvel == 0.0 or rvel >= 3.1 or rvel <= min_dis)) :
-                ##self.twist.angular.z = (right + left) * 0.5
-        #        self.twist.linear.x = 0
         
-        ##print(self.twist.linear.x)
-        # Publish msg to cmd_vel.
-        ##rospy.sleep(100)
         self.twist_pub.publish(self.twist)
         
 
