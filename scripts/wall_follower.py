@@ -53,7 +53,7 @@ class WallFollower(object):
         #   in front of the robot.
         vel = data.ranges[90]
         left = 0
-        turn = 0.25
+        turn = 0.4
         iturn = -50
         safety = 1
         isafety = -50
@@ -73,18 +73,20 @@ class WallFollower(object):
 
         print(iturn)
 
-        self.twist.angular.z = (iturn - 90) / 100
+        self.twist.angular.z = (iturn - 90) / 100 + ((turn - 0.25)*2)
 
-        self.twist.angular.z = (iturn - 90) / 100
-        self.twist.linear.x = 0
+        if (iturn >= 100):
+            self.twist.angular.z = (iturn - 90) / 10 + ((turn - 0.25)*20)
         
-        self.twist.linear.x = 0.2/ (1+ abs(90-iturn))
+        self.twist.linear.x = 0.05
+
+        
         if (iturn == -50):
             self.twist.angular.z = 0
             self.twist.linear.x = 0.1
             if (isafety >= 30):
-                self.twist.angular.z = 1
-                self.twist.linear.x = 0.1
+                self.twist.angular.z = safety * 10
+                self.twist.linear.x = 0.001/ (1+ abs(90-isafety))
             
         
         print(self.twist.linear.x)
