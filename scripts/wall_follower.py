@@ -51,7 +51,7 @@ class WallFollower(object):
 
         # The first entry in the ranges list corresponds with what's directly
         #   in front of the robot.
-        vel = data.ranges[90]
+        
         left = 0
         turn = 0.4
         iturn = -50
@@ -59,7 +59,7 @@ class WallFollower(object):
         isafety = -50
         
 
-       ## print(vel)
+       
         
         for i in range (181):
             left = data.ranges[i]

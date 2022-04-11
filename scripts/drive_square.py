@@ -12,9 +12,14 @@ class driveSquare(object):
     def __init__(self):
         # initialize the ROS node
         rospy.init_node('drive_square')
+        print(1)
         # setup publisher to the cmd_vel ROS topic
         self.robot_movement_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=10)
         rospy.sleep(1)
+        
+
+    def drive(self):
+        print(2)
         #make the robot go forwards for two seconds then turn at approximately 90 degrees
         #loop this four times to produce a square
         for i in range(4):
@@ -28,9 +33,9 @@ class driveSquare(object):
         self.twist = Twist(linear=Vector3(0,0,0),angular=Vector3(0,0,0))
         self.robot_movement_pub.publish(self.twist)
 
-
+    
 
 if __name__ == '__main__':
     # instantiate the ROS node and run it
     node = driveSquare()
-    node.run()
+    node.drive()
