@@ -17,7 +17,7 @@ from geometry_msgs.msg import Vector3
 # How close we will get to the person.
 min_dis = 0.5
 
-max_dis = 2.0
+##max_dis = 3.1
 
 class PersonFollower(object):
     """ This node walks the robot to wall and stops """
@@ -49,49 +49,68 @@ class PersonFollower(object):
 
         # The first entry in the ranges list corresponds with what's directly
         #   in front of the robot.
-        lvel = 0
-        rvel = 0
-        right = 0
-        left = 0
+        #lvel = 0
+        #rvel = 0
+        max_dis = 3.1
+        move = 0
         
-        for i in range (179):
-            right = data.ranges[-i]
-            print(right)
-            left = data.ranges[i]
-            print(left)
-            if (right == 0 or left == 0 or right > max_dis or left > max_dis):
-                self.twist.angular.z = 0
-                
-            if (right > 0 and right <= max_dis and (left == 0 or left > max_dis)):
-                self.twist.angular.z = -i/5
-                print("r")
-                print(i)
-                
-                break
+        
+        for i in range (180):
+            r = - data.ranges[-i]
             
-            if (left > 0 and left <= max_dis and (right == 0 or right > max_dis)):
-                self.twist.angular.z = i/5
-                print("l")
-                print(i)
+            l = data.ranges[i]
+
+            if (abs(r)<abs(max_dis) and abs(r)>= min_dis):
+                max_dis = r
+                move = i
+            if (l<abs(max_dis) and l>= min_dis):
+                max_dis = l
+                move = i
+        self.twist.linear.x = 0
+        if (max_dis < 0):
+            self.twist.angular.z = -move/20
+            print(max_dis)
+        if (max_dis > 0):
+            self.twist.angular.z = move/20
+            print(max_dis)
+        if (move < 10 and move > 0):
+            self.twist.linear.x = abs(max_dis)
+        
+
+            
+          ##  if (right == 0 or left == 0 or right > max_dis or left > max_dis):
+          ##      self.twist.angular.z = 0
+                
+       ##     if (right > 0 and right <= max_dis and (left == 0 or left > max_dis)):
+       ##         self.twist.angular.z = -i/5
+       ##         print("r")
+       ##         print(i)
+                
+        ##        break
+            
+        ##    if (left > 0 and left <= max_dis and (right == 0 or right > max_dis)):
+        ##        self.twist.angular.z = i/5
+         ##       print("l")
+        ##        print(i)
               ##  print(2)
-                break
-            if (data.ranges[180] > 0 and data.ranges[180] <= max_dis):
-                self.twist.angular.z = 30
+         ##       break
+         ##   if (data.ranges[180] > 0 and data.ranges[180] <= max_dis):
+         ##       self.twist.angular.z = 30 
             ##print(self.twist.angular.z)
             
-        for i in range(11):
+       ## for i in range(11):
             
-            lvel = data.ranges[i]
+       ##     lvel = data.ranges[i]
             
-            rvel = data.ranges[-i]
+       ##     rvel = data.ranges[-i]
            
-            if ((lvel >= min_dis and lvel < max_dis) or (rvel >= min_dis and rvel < max_dis)):
+         #   if ((lvel >= min_dis and lvel < max_dis) or (rvel >= min_dis and rvel < max_dis)):
                 # Go forward if not close enough to person.
-                self.twist.linear.x = lvel / 2 + rvel /2
-                break
-            if ((lvel == 0.0 or lvel >= max_dis or lvel <= min_dis) and (rvel == 0.0 or rvel >= 3.1 or rvel <= min_dis)) :
+      #          self.twist.linear.x = lvel / 2 + rvel /2
+       #         break
+       #     if ((lvel == 0.0 or lvel >= max_dis or lvel <= min_dis) and (rvel == 0.0 or rvel >= 3.1 or rvel <= min_dis)) :
                 ##self.twist.angular.z = (right + left) * 0.5
-                self.twist.linear.x = 0
+        #        self.twist.linear.x = 0
         
         ##print(self.twist.linear.x)
         # Publish msg to cmd_vel.
