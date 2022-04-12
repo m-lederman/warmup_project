@@ -13,8 +13,8 @@ For this problem, I had to figure out how get a robot to first track my position
 
 Outside of my initializing function, I put all of my code into the process_scan sequence. Within process_scan, I first used a for loop that ran 181 times, so that the variable i would go from 0 to 180, allowing me then to set two variables right and left, that could track the position of every object found on their half of the lidar (left tracked position from 0 to 180, while right tracked from 0 to -180). Within the for loop, I had two if statements to find which of the 360 data points tracked is the closest to the robot, and whether it is to the right or to the left. Based off of this, outside of the for loop, I put two other if statements that make the robot turn to the right or to the left depending of which direction it should turn towards the closest object, while turning at a proportional rate to the degree at which the object is found (turns faster when the object is behind then when it is closer to being in front). Finally we end with an if statement that makes the robot go forward if the closest object detected is approximately in front of it (-9 to 9 degrees). 
 
-![Alt Text](https://github.com/m-lederman/warmup_project/blob/main/persfol1.mov)
-![Alt Text](https://github.com/m-lederman/warmup_project/blob/main/persfol2.mov)
+![Alt Text](https://github.com/m-lederman/warmup_project/blob/main/persfol1.gif)
+![Alt Text](https://github.com/m-lederman/warmup_project/blob/main/persfol2.gif)
 
 
 ## Wall Follower
@@ -22,9 +22,9 @@ For this probelm, I needed my robot to move forwards until it found a wall. Once
 
 To implement this, after initializing, I put the bulk of the code in process_scan. There, I began by searching for the closest object within a 0.4 meter radius in the same manner as person follower, however, I also search for the closest object within a 1 meter radius as a backup. Once finding the closest part of the wall, we force the robot to default turn so that it approaches both the 90 degrees that mean it is parallel to the wall, and the 0.25 meters that mean it is at a constant distance, while having it move forward at a constant speed. We then use two special clauses. The first one is that if that closest part of the wall is behind the robot, then it will turn at a faster speed, since this most likely means the robot is potentially driving into open air, and if it doesn't turn fast enough, it will lose track of the wall. The second case, is that if no wall is detected within 0.4 meters, then the robot will just drive forward until it finds something, unless there is a wall within 1 meter, in which case it will turn towards the wall, heading towards it at an angle (this does not negatively affect the first approach to the wall, and is meant as a safety measure if the robot ever loses track of the wall for a moment). 
 
-![Alt Text](https://github.com/m-lederman/warmup_project/blob/main/wallfal1.mov)
-![Alt Text](https://github.com/m-lederman/warmup_project/blob/main/wallfal2.mov)
-![Alt Text](https://github.com/m-lederman/warmup_project/blob/main/wallfal3.mov)
+![Alt Text](https://github.com/m-lederman/warmup_project/blob/main/wallfal1.gif)
+![Alt Text](https://github.com/m-lederman/warmup_project/blob/main/wallfal2.gif)
+![Alt Text](https://github.com/m-lederman/warmup_project/blob/main/wallfal3.gif)
 
 ## Challenges
 The biggest challenge I had was figuring out how the LIDAR worked, and then how to use it properly. What I mean by this, is in the case of person follower, I first tried to implement a code that would focus not on the closest object to it, but instead would break the moment it found an object, meaning that if something was 3 meters away but directly in front of it and something else was 1 meter away to the right, it would track the thing in front. This meant that the robot would just end up picking up random things and tracking those, unless I was the only the only thing in the room and made sure the robot stayed very far from the wall. Even then, after implementing what I thought was a better method, the robot still picks up random things at times, and takes longer than it should to hone in on me.
